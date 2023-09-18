@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="exemplo de fallback">
+    <title>Minha primeira PWA</title>
+    <link rel="apple-touch-icon" href="images/pwa-icon-256.png" />
+    <link rel="stylesheet" href="css/style.css" />
+    <!--viewport para designers responsivos (mobo), content é a configuração-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="white" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="favicon.ico">
+    <script type="module" src="js/main.js"></script>
+    <script type="module" src="js/db.js"></script>
+</head>
+
+<body class="fullscreen">
+    <div class="container">
+        <h1 class="title">Minha primeira PWA</h1>
+        <div style="text-align: center;">
+          
+          
+           <input type="text" placeholder="nome" id="nome " name="nome"/>
+           <input type="text" placeholder="idade" id="idade" name="idade"/>
+            
+
+           <input type="text" placeholder="buscar" id="buscar" name="buscar"/>
+           <button id="buscar">Buscar</button>
+
+        </div>
+        <div style="text-align: center;">
+            <button id="btnSalvar">Salvar</button>
+            <button id="btnListar">Listar</button>
+        </div>
+        <div>
+            <output></output>
+        </div>
+    </div>
+</body>
+
+</html>
