@@ -28,6 +28,7 @@ window.addEventListener("DOMContentLoaded", async event => {
     createDB();
     document.getElementById("btnSalvar").addEventListener("click", addData);
     document.getElementById("btnListar").addEventListener("click", getData);
+    document.getElementById("buscarNome").addEventListener("click", buscar);
 });
 
 async function getData() {
