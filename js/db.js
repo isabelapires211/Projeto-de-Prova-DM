@@ -19,7 +19,7 @@ async function createDB() {
         });
         showResult("Banco de dados aberto.");
     } catch (e) {
-        showError("Erro ao criar o banco de dados: " + e.message);
+        showResult("Erro ao criar o banco de dados: " + e.message)
     }
 }
 
@@ -27,83 +27,68 @@ window.addEventListener("DOMContentLoaded", async event => {
     createDB();
     document.getElementById("btnSalvar").addEventListener("click", addData);
     document.getElementById("btnListar").addEventListener("click", getData);
-    document.getElementById("buscarNome").addEventListener("click", buscar);
+    document.getElementById("btnBuscar").addEventListener("click", buscar);
 });
 
 async function getData() {
-    if (!db) {
-        showError("O banco de dados está fechado");
+    if (db == undefined) {
+        showResult("O banco de dados está fechado");
         return;
     }
 
-    const tx = await db.transaction('pessoas', 'readonly');
+    const tx = await db.transaction('pessoas', 'readonly')
     const store = tx.objectStore('pessoas');
-    try {
-        const value = await store.getAll();
-        if (value.length > 0) {
-            showResult("Dados do banco: " + JSON.stringify(value));
-        } else {
-            showResult("Não há nenhum dado no banco!");
-        }
-    } catch (error) {
-        showError("Erro ao buscar dados: " + error.message);
+    const value = await store.getAll();
+    if (value) {
+        showResult("Dados do banco: " + JSON.stringify(value))
+    } else {
+        showResult("Não há nenhum dado no banco!")
     }
 }
 
 async function addData() {
     const nomeInput = document.querySelector('input[name="nome"]');
     const idadeInput = document.querySelector('input[name="idade"]');
-    const nome = nomeInput.value.trim(); // Remova espaços em branco
-    const idade = idadeInput.value.trim(); // Remova espaços em branco
+    const nome = nomeInput.value;
+    const idade = idadeInput.value; 
 
     if (!nome || !idade) {
-        showError("Por favor, preencha os campos Nome e Idade.");
+        showResult("Por favor, preencha os campos Nome e Idade.");
         return;
     }
 
     const tx = await db.transaction('pessoas', 'readwrite');
     const store = tx.objectStore('pessoas');
-    try {
-        await store.add({ nome, idade });
-        showResult(`Dados salvos: Nome - ${nome}, Idade - ${idade}`);
-        nomeInput.value = "";
-        idadeInput.value = "";
-    } catch (error) {
-        showError("Erro ao salvar dados: " + error.message);
-    }
+    store.add({ nome, idade });
+
+    await tx.done;
+    showResult(`Dados salvos: Nome - ${nome}, Idade - ${idade}`);
+    nomeInput.value="";
+    idadeInput.value="";
 }
 
 function showResult(text) {
     document.querySelector("output").innerHTML = text;
 }
 
-function showError(text) {
-    console.error(text);
-    showResult(text);
-}
-
-async function buscar() {
-    const nomeBuscando = document.getElementById('buscar').value.trim(); // Remova espaços em branco
-    if (!db) {
-        showError("O banco de dados está fechado");
-        return;
-    }
-
+async function buscar(){
+    const nomeBuscando = document.getElementById('buscarNome').value;
     const tx = db.transaction('pessoas', 'readonly');
-    const store = tx.objectStore('pessoas');
-    try {
+    const store = tx.objectStore ('pessoas');
+     try{
         let objetoBuscado = await store.get(nomeBuscando);
-        if (objetoBuscado) {
-            const nomeElement = document.getElementById('nome');
-            const idadeElement = document.getElementById('idade');
-            if (nomeElement && idadeElement) {
-                nomeElement.value = objetoBuscado.nome;
-                idadeElement.value = objetoBuscado.idade;
-            }
-        } else {
-            showResult(`Nenhum registro encontrado para o nome ${nomeBuscando}.`);
-        }
-    } catch (error) {
-        showError("Erro ao buscar dados: " + error.message);
-    }
+        document.getElementById('nome').value =
+        objetoBuscado.nome
+        document.getElementById('idade').value =
+        objetoBuscado.idade
+
+
+        await tx.done;
+        showResult(`Nome Buscado: Nome - ${objetoBuscado.nome}, Idade - ${objetoBuscado.idade}`);
+        document.getElementById('nome').value=""
+        document.getElementById('idade').value=""
+
+     } catch(error){
+        console.log(error.message);
+     }
 }
