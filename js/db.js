@@ -27,7 +27,9 @@ window.addEventListener("DOMContentLoaded", async event => {
     createDB();
     document.getElementById("btnSalvar").addEventListener("click", addData);
     document.getElementById("btnListar").addEventListener("click", getData);
-    document.getElementById("btnBuscar").addEventListener("click", buscar);
+    document.getElementById("btnBuscar").addEventListener("click", buscarUsuario);
+    document.getElementById("btnRemover").addEventListener("click", removerUsuario);
+    document.getElementById("btnAtualizar").addEventListener("click", atualizarUsuario);
 });
 
 async function getData() {
@@ -71,24 +73,72 @@ function showResult(text) {
     document.querySelector("output").innerHTML = text;
 }
 
-async function buscar(){
-    const nomeBuscando = document.getElementById('buscarNome').value;
+async function buscarUsuario() {
+    const nomeBuscar = document.getElementById('buscarNome').value;
+    const nomeInput = document.getElementById('nome');
+    const idadeInput = document.getElementById('idade');
+    const btnAtualizar = document.getElementById('btnAtualizar');
+
     const tx = db.transaction('pessoas', 'readonly');
-    const store = tx.objectStore ('pessoas');
-     try{
-        let objetoBuscado = await store.get(nomeBuscando);
-        document.getElementById('nome').value =
-        objetoBuscado.nome
-        document.getElementById('idade').value =
-        objetoBuscado.idade
+    const store = tx.objectStore('pessoas');
 
+    try {
+        const usuario = await store.get(nomeBuscar);
 
-        await tx.done;
-        showResult(`Nome Buscado: Nome - ${objetoBuscado.nome}, Idade - ${objetoBuscado.idade}`);
-        document.getElementById('nome').value=""
-        document.getElementById('idade').value=""
-
-     } catch(error){
+        if (usuario) {
+            nomeInput.value = usuario.nome;
+            idadeInput.value = usuario.idade;
+            btnAtualizar.style.display = "block"; // Mostra o botão de atualização
+            showResult(`Usuário ${nomeBuscar} encontrado.`);
+        } else {
+            showResult(`Usuário ${nomeBuscar} não encontrado.`);
+            nomeInput.value = "";
+            idadeInput.value = "";
+            btnAtualizar.style.display = "none"; // Oculta o botão de atualização
+        }
+    } catch (error) {
         console.log(error.message);
-     }
+    }
+}
+
+async function atualizarUsuario() {
+    const nomeParaAtualizar = document.getElementById('nome').value;
+    const novaIdade = document.getElementById('idade').value;
+    const tx = db.transaction('pessoas', 'readwrite');
+    const store = tx.objectStore('pessoas');
+    try {
+        let objetoExistente = await store.get(nomeParaAtualizar);
+        if (objetoExistente) {
+            objetoExistente.idade = novaIdade;
+            await store.put(objetoExistente);
+            showResult(`Registro para o nome ${nomeParaAtualizar} atualizado com a nova idade ${novaIdade}.`);
+        } else {
+            showResult(`Nenhum registro encontrado para o nome ${nomeParaAtualizar}.`);
+        }
+    } catch (error) {
+        console.log(error.message);
+        showResult("Erro ao atualizar o registro.");
+    }
+}
+
+async function removerUsuario() {
+    const nomeRemoverInput = document.querySelector('input[name="nome-remover"]');
+    const nomeRemover = nomeRemoverInput.value;
+
+    if (!nomeRemover) {
+        showResult("Por favor, informe o nome do usuário a ser removido.");
+        return;
+    }
+
+    const tx = await db.transaction('pessoas', 'readwrite');
+    const store = tx.objectStore('pessoas');
+
+    try {
+        await store.delete(nomeRemover);
+        await tx.done;
+        showResult(`Usuário ${nomeRemover} removido com sucesso.`);
+        nomeRemoverInput.value = "";
+    } catch (error) {
+        showResult(`Erro ao remover usuário: ${error.message}`);
+    }
 }

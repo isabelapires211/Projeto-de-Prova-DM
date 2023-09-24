@@ -12,32 +12,30 @@
     <meta name="theme-color" content="white" />
     <link rel="manifest" href="manifest.json" />
     <link rel="icon" href="favicon.ico">
+    <link rel="stylesheet" href="./css/style.css">
     <script type="module" src="js/main.js"></script>
     <script type="module" src="js/db.js"></script>
 </head>
 
 <body class="fullscreen">
     <div class="container">
-        <h1 class="title">Faça seu cadastro</h1>
-        <div style="text-align: center;">
+        <h1 class="title">Cadastro</h1>
+        <div>
           
           
            <input type="text" placeholder="nome" id="nome" name="nome"/>
            <input type="text" placeholder="idade" id="idade" name="idade"/>
-            
-
-           <input type="text" id="buscarNome" placeholder="Digite o nome a ser buscado">
-
+           <button id="btnSalvar">Salvar</button>
+           <button id="btnListar">Listar</button>
            
+           <input type="text" id="buscarNome" name="buscarNome" placeholder="Digite o nome a ser buscado">
+           <button id="btnBuscar">Buscar</button>
+           <button id="btnAtualizar">Atualizar</button>
 
-           
-           
 
-        </div>
-        <div style="text-align: center;">
-            <button id="btnSalvar">Salvar</button>
-            <button id="btnListar">Listar</button>
-            <button id="btnBuscar">Buscar</button>
+           <input type="text" id="nome-remover" name="nome-remover"  placeholder="Nome do Usuário a Remover">
+           <button id="btnRemover">Remover Usuário</button>
+
         </div>
         <div>
             <output></output>
